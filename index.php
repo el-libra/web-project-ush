@@ -6,11 +6,11 @@ session_start();
 // 2. Load Config: Memuat konfigurasi database dan pengaturan lainnya
 require_once 'config/db_koneksi.php';
 // 3. Include Controllers: Memuat semua controller yang dibutuhkan
-require_once 'controllers/BookController.php';
-require_once 'controllers/UserController.php';
+require_once 'controller/BookController.php';
+require_once 'controller/LoginController.php';
 // 4. Inisialisasi Base_URL untuk routing dinamis
 if(!defined('BASE_URL')){
-    define('BASE_URL', 'http://localhost/press_book/');
+    define('BASE_URL', 'http://localhost/web-project/');
 }
 // 5. Instance Controllers
 $bookController = new BookController($conn);
@@ -47,6 +47,24 @@ if ($action === 'logout') {
     header("Location: " . BASE_URL);
     exit();
 }
+
+// Handle Register Action:
+if ($action === 'register' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = isset($_POST['name']) ? $_POST['name'] : '';
+    $email = isset($_POST['email']) ? $_POST['email'] : '';
+    $password = isset($_POST['password']) ? $_POST['password'] : '';
+
+    $result = $loginController->register($name, $email, $password);
+    if ($result === true) {
+        header("Location: " . BASE_URL . "index.php?page=login");
+        exit;
+    }
+
+    $error = is_string($result) ? $result : 'Registrasi gagal';
+    header("Location: " . BASE_URL . "index.php?page=register&error=" . urlencode($error));
+    exit;
+}
+
 // 8. Routing berdasarkan halaman yang diminta
 switch ($page) {
     // Login Page
@@ -64,5 +82,9 @@ switch ($page) {
     // Home Page
     case 'home':
         require 'views/home.php';
+        break;
+    // Register Page
+    case 'register':
+        require 'views/register.php';
         break;
 }

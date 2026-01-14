@@ -27,7 +27,7 @@ try{
     die("Database Error: " . $e->getMessage());
 }
 // Production: ubah nama domain anda
-define('BASE_URL', 'http://localhost/press_book/');
+define('BASE_URL', 'http://localhost/web-project/');
 ?>
 
 
